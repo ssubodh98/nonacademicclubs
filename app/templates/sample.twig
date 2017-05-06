@@ -1,0 +1,32 @@
+<html>
+<head>
+  <title>Lazy Slim3 : The framework for the laziest !</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!-- <script type="text/javascript">
+    $("#sub").click(function(e){
+      var Data = $("#myform").serializeArray();
+      console.log(Data);
+      $.ajax({
+        url: "{{base_url()}}/post/",
+        type: "POST",
+        // contentType: 'application/json',
+        // dataType: "json",
+        data: Data,
+        success: function(data, textStatus, jqXHR)
+              {
+                  alert("hello");
+                },
+      });
+      e.preventDefault();
+    });
+  </script> -->
+</head>
+<body>
+  {{ name }}
+
+  <form class="" action="" method="post" id="myform">
+    <input type="text" name="username" value=""  id="username">
+    <input type="submit" name="submit" value="submit" id="sub">
+  </form>
+</body>
+</html>
