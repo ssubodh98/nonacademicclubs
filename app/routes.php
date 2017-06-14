@@ -22,17 +22,31 @@ $app->get('/login', function($request, $response, $args) {
 $app->post('/register', function($request, $response, $args) {
     $body = $response->getBody();
     $post_data = $request -> getParsedBody();
-    $registerno = $post_data['registerno'];
-    $firstname = $post_data['firstname'];
-    $middlename = $post_data['middlename'];
-    $lastname = $post_data['lastname'];
-
+    $regno = $post_data['regno'];
+    $firstname = $post_data['fname'];
+    $middlename = $post_data['mname'];
+    $lastname = $post_data['lname'];
+    $dob = $post_data['dob'];
+    $gender = $post_data['gender'];
+    $email = $post_data['email'];
+    $phone = $post_data['phone'];
+    $bloodgroup = $post_data['bgroup'];
+    $program = $post_data['program'];
+    $year = $post_data['year'];
+    $department = $post_data['dept'];
+    $semester = $post_data['sem'];
+    $clubid = $post_data['cid'];
+    $password = $post_data['pass'];
     try{
         /*
         $query = $this->db->prepare('INSERT INTO studentdetails (regno, firstname, middlename, lastname, dob, gender, email, phone, bloodgroup, program, year, department, semester, clubid) VALUES ($registerno, $firstname, $middlename, $lastname, '', '', '', '', '', '', '', '', '', '')');*/
-        $query = $this->db->prepare('INSERT INTO studentdetails (`regno`, `firstname`, `middlename`, `lastname`) VALUES ($registerno, $firstname, $middlename, $lastname)');
+        $query = $this->db->prepare("INSERT INTO `studentdetails` (`regno`, `firstname`, `middlename`, `lastname`, `dob`, `gender`, `email`, `phone`, `bloodgroup`, `program`, `year`, `department`, `semester`, `clubid`) VALUES ('$regno', '$firstname', '$middlename', '$lastname', '$dob', '$gender', '$email', '$phone', '$bloodgroup', '$program', '$year', '$department', '$semester', '$clubid')");
         
         $query->execute();
+        
+        $query2 = $this->db->prepare("INSERT INTO `login` (`username`, `password`) VALUES ('$regno', '$password')");
+        
+        $query2->execute();
     }
     catch (Exception $e){
         
@@ -42,6 +56,29 @@ $app->post('/register', function($request, $response, $args) {
     
     return $this->view->render($response, 'register.twig');
 })->setName('register');
+
+$app->post('/login', function($request, $response, $args) {
+    $body = $response->getBody();
+    $post_data = $request -> getParsedBody();
+    $email = $post_data['email'];
+    $pass = $post_data['password'];
+    try{
+        $query2 = $this->db->prepare("SELECT * FROM login where `username`='$email' AND `password`='$pass'");
+        $query2->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    
+    $docs2 = $query2->FetchAll();
+    $items2 = array();
+    foreach ($docs2 as $doc2){
+    $items2[] = $doc2;        
+    }
+
+    
+    return $this->view->render($response, 'login.twig');
+})->setName('login');
 
 
 //$app->get('/create', function() use($app){
@@ -510,7 +547,126 @@ $app->get('/chome', function($request, $response, $args) {
     
 })->setName('chome');
 
-$app->get('/home', function($request, $response, $args) {
+
+$app->get('/editAttendance/{id}/', function($request, $response, $args) {
+    
+    $id=$request->getAttribute('id');
+    try{
+        $query = $this->db->prepare("SELECT * FROM `studentdetails` where `clubid`=$id");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $stud = array();
+    foreach ($docs as $doc){
+        $stud[] = $doc;        
+    }
+    try{
+        $query = $this->db->prepare("SELECT * FROM dates");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $ditem = array();
+    foreach ($docs as $doc){
+        $ditem[] = $doc;        
+    }
+    
+    return $this->view->render($response, 'Coordinator/editAttendance.twig', array('stud' => $stud , 'ditem' => $ditem));
+    
+})->setName('editAttendance');
+
+$app->get('/editAttendance/{id}/datess/{date}/', function($request, $response, $args) {
+    
+    $id=$request->getAttribute('id');
+    $date=$request->getAttribute('date');
+    try{
+        $query = $this->db->prepare("SELECT * FROM `studentdetails` where `clubid`=$id");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $stud = array();
+    foreach ($docs as $doc){
+        $stud[] = $doc;        
+    }
+    try{
+        $query = $this->db->prepare("SELECT * FROM dates");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $ditem = array();
+    foreach ($docs as $doc){
+        $ditem[] = $doc;        
+    }
+    
+    try{
+        $query3 = $this->db->prepare("SELECT * FROM attendance where `date`='$date' AND `clubid`=$id");
+        $query3->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs3 = $query3->FetchAll();
+    $ditem3 = array();
+    foreach ($docs3 as $doc3){
+        $ditem3[] = $doc3;        
+    }
+     //var_dump($ditem3);
+    return $this->view->render($response, 'Coordinator/editAttendance.twig', array('stud' => $stud, 'ditem' => $ditem, 'ditem3' => $ditem3));
+    
+})->setName('editAttendance');
+
+
+$app->get('/editAttendance/{id}/datess/{date}/change/{idd}', function($request, $response, $args) {
+    $id=$request->getAttribute('id');
+    $date=$request->getAttribute('date');
+    $idd=$request->getAttribute('idd');
+   
+    try{
+        $query = $this->db->prepare("DELETE FROM `attendance` WHERE `regno`=$idd AND `date`='$date'");
+        $query->execute();
+    }
+    catch (Exception $e){
+        echo $e->getMessage(); 
+        die();
+        //$body->write(json_encode($e));  
+    }
+    
+    
+     return $this->view->render($response->withRedirect('../'), 'Coordinator/editAttendance.twig');
+})->setName('editAttendance');
+
+$app->get('/editAttendance/{id}/datess/{date}/absent/{idd}', function($request, $response, $args) {
+    $id=$request->getAttribute('id');
+    $date=$request->getAttribute('date');
+    $idd=$request->getAttribute('idd');
+   
+    try{
+        $query = $this->db->prepare("INSERT INTO `attendance` (`regno`, `date`, `clubid`) VALUES ('$idd', '$date', '$id')");
+        $query->execute();
+    }
+    catch (Exception $e){
+        echo $e->getMessage(); 
+        die();
+        //$body->write(json_encode($e));  
+    }
+    
+    
+     return $this->view->render($response->withRedirect('../'), 'Coordinator/editAttendance.twig');
+})->setName('editAttendance');
+
+
+$app->get('/attendance', function($request, $response, $args) {
 //    $ar=$args['edit'];
 //    var_dump($ar);
     try{
@@ -527,12 +683,118 @@ $app->get('/home', function($request, $response, $args) {
     foreach ($docs as $doc){
         $items[] = $doc;        
     }       
-    return $this->view->render($response, 'home.twig', array('items' => $items));
+    return $this->view->render($response, 'attendance.twig', array('items' => $items));
     
-})->setName('home');
+})->setName('attendance');
 
+$app->get('/vattendance/{id}/', function($request, $response, $args) {
+    $id=$request->getAttribute('id');
+    $date=$request->getAttribute('date');
+    try{
+        $query = $this->db->prepare("SELECT * FROM `studentdetails` where `clubid`=$id");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $stud = array();
+    foreach ($docs as $doc){
+        $stud[] = $doc;        
+    }
+    try{
+        $query = $this->db->prepare("SELECT * FROM dates");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $ditem = array();
+    foreach ($docs as $doc){
+        $ditem[] = $doc;        
+    }
+    
+    try{
+        $query3 = $this->db->prepare("SELECT * FROM attendance where `date`='$date' AND `clubid`=$id");
+        $query3->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs3 = $query3->FetchAll();
+    $ditem3 = array();
+    foreach ($docs3 as $doc3){
+        $ditem3[] = $doc3;        
+    }
+    try{
+        $query4 = $this->db->prepare("SELECT * FROM attendance where `clubid`=$id");
+        $query4->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs4 = $query4->FetchAll();
+    $ditem4 = array();
+    foreach ($docs4 as $doc4){
+        $ditem4[] = $doc4;        
+    }
+     //var_dump($ditem3);
+    return $this->view->render($response, 'vattendance.twig', array('stud' => $stud, 'ditem' => $ditem, 'ditem3' => $ditem3, 'ditem4' => $ditem4));
+    
+})->setName('vattendance');
 
+$app->get('/vattendance/{id}/datess/{date}/change/{idd}', function($request, $response, $args) {
+    $id=$request->getAttribute('id');
+    $date=$request->getAttribute('date');
+    $idd=$request->getAttribute('idd');
+    
+    try{
+        $query = $this->db->prepare("SELECT * FROM `attendance` where `clubid`='$id' AND `regno`='$idd' AND `date`='$date'");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $stud = array();
+    foreach ($docs as $doc){
+        $stud[] = $doc;        
+    }
+    
+        if( count($stud) > 0){
+                try{
+                    $query = $this->db->prepare("DELETE FROM `attendance` WHERE `regno`=$idd AND `date`='$date'");
+                    $query->execute();
+                }
+                catch (Exception $e){
+                    echo $e->getMessage(); 
+                    die();
+                    //$body->write(json_encode($e));  
+            }
 
+        }
+        else{
+                var_dump("absent");
+                try{
+                    $query = $this->db->prepare("INSERT INTO `attendance` (`regno`, `date`, `clubid`) VALUES ('$idd', '$date', '$id')");
+                    $query->execute();
+                }
+                catch (Exception $e){
+                    echo $e->getMessage(); 
+                    die();
+                    //$body->write(json_encode($e));  
+            }
+
+        
+
+    }
+   
+    
+     
+    return $this->view->render($response->withRedirect('../../../'), 'vattendance.twig', array('stud' => $stud/*, 'ditem' => $ditem, 'ditem3' => $ditem3, 'ditem4' => $ditem4*/));
+    
+})->setName('vattendance');
 
 
 $app->get('/viewAttendance/{id}', function($request, $response, $args) {
@@ -566,9 +828,10 @@ $app->get('/viewAttendance/{id}', function($request, $response, $args) {
     
 })->setName('viewAttendance');
 
-$app->get('/editAttendance/{id}', function($request, $response, $args) {
+$app->get('/viewAttendance/{id}/datess/{date}/', function($request, $response, $args) {
     
     $id=$request->getAttribute('id');
+    $date=$request->getAttribute('date');
     try{
         $query = $this->db->prepare("SELECT * FROM `studentdetails` where `clubid`=$id");
         $query->execute();
@@ -593,15 +856,104 @@ $app->get('/editAttendance/{id}', function($request, $response, $args) {
     foreach ($docs as $doc){
         $ditem[] = $doc;        
     }
-    return $this->view->render($response, 'Coordinator/editAttendance.twig', array('stud' => $stud , 'ditem' => $ditem));
+    try{
+        $query4 = $this->db->prepare("SELECT * FROM attendance where `date`='$date' AND `clubid`=$id");
+        $query4->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs4 = $query4->FetchAll();
+    $ditem4 = array();
+    foreach ($docs4 as $doc4){
+        $ditem4[] = $doc4;        
+    }
+    return $this->view->render($response, 'Coordinator/viewAttendance.twig', array('stud' => $stud , 'ditem' => $ditem,'ditem4' => $ditem4));
     
-})->setName('editAttendance');
+})->setName('viewAttendance');
 
+$app->get('/home', function($request, $response, $args) {
+//    $ar=$args['edit'];
+//    var_dump($ar);
+    try{
+        $query = $this->db->prepare('SELECT * FROM clubdetails');
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
 
+    $docs = $query->FetchAll();
+    //var_dump($docs);
+    $items = array();
+    foreach ($docs as $doc){
+        $items[] = $doc;        
+    }
+    try{
+        $query = $this->db->prepare("SELECT * FROM dates");
+        $query->execute();
+    }catch(Exception $e){
+        echo $e->getMessage();
+        die();
+    }
+    $docs = $query->FetchAll();
+    $ditem = array();
+    foreach ($docs as $doc){
+        $ditem[] = $doc;        
+    }
+    return $this->view->render($response, 'home.twig', array('items' => $items, 'ditem' => $ditem));
+    
+})->setName('home');
 
+$app->post('/home/setd', function($request, $response, $args) {
+    $body = $response->getBody();
+    $post_data = $request -> getParsedBody();
+    $date = $post_data['setd'];
+    $valid = "1";
+    try{
+        $query = $this->db->prepare("INSERT INTO `dates` (`date`, `valid`) VALUES ('$date', '$valid')");
+        $query->execute();
+    }
+    catch (Exception $e){
+        echo $e->getMessage(); 
+        die();
+        //$body->write(json_encode($e));  
+    }
+    return $this->view->render($response->withRedirect('../home'), 'home.twig');
+    
+})->setName('home');
 
+$app->get('/home/freez/{date}/', function($request, $response, $args) {
+    $date=$request->getAttribute('date');
+    $valid = "0";
+    try{
+        $query = $this->db->prepare("UPDATE `dates` SET `valid`='$valid' WHERE `date`='$date'");
+        $query->execute();
+    }
+    catch (Exception $e){
+        echo $e->getMessage(); 
+        die();
+        //$body->write(json_encode($e));  
+    }
+    return $this->view->render($response->withRedirect('../../../home'), 'home.twig');
+    
+})->setName('home');
 
-
+$app->get('/home/open/{date}/', function($request, $response, $args) {
+    $date=$request->getAttribute('date');
+    $valid = "1";
+    try{
+        $query = $this->db->prepare("UPDATE `dates` SET `valid`='$valid' WHERE `date`='$date'");
+        $query->execute();
+    }
+    catch (Exception $e){
+        echo $e->getMessage(); 
+        die();
+        //$body->write(json_encode($e));  
+    }
+    return $this->view->render($response->withRedirect('../../../home'), 'home.twig');
+    
+})->setName('home');
 
 
 

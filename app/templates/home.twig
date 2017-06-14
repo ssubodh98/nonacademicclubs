@@ -143,6 +143,7 @@ desired effect
           <li class="active"><a href="/nss/home"><i class="fa fa-link"></i> <span>Home</span></a></li>
           <li><a href="/nss/clubs"><i class="fa fa-link"></i> <span>CLUBS</span></a></li>
           <li><a href="/nss/addc"><i class="fa fa-link"></i> <span>Add Coordinators</span></a></li>
+          <li><a href="/nss/attendance"><i class="fa fa-link"></i> <span>Attendance</span></a></li>
 <!--        <li><a href="viewClub"><i class="fa fa-link"></i> <span>View Club</span></a></li>-->
       </ul>
       <!-- /.sidebar-menu -->
@@ -164,7 +165,232 @@ desired effect
     <!-- Main content -->
     <section class="content">
         <!-- Your Page Content Here -->
+        <div class="row">
+        <!-- left column --> 
+        <div class="col-md-8">
+            <div class="col-md-12" style="border:2px solid #3C8DBA; padding-top:5px; padding-bottom:5px; padding-left:0px;">
+            <div class="col-md-3">
+                <img src="{{ base_url() }}/static/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+            </div>
+            
+            <div class="col-md-3" style="font-size:16px;">
+                <br>
+                Name: <span id="">Admin</span>
+                <br><br>
+                Position: <span id="">Admin</span>
+                <br><br>
+                
+            </div>
+            
+            <div class="col-md-6" style="font-size:16px;">
+                <br>
+                E-mail: <span id="">admin@karunya.edu.in</span>
+                <br><br>
+                Phone: <span id="">99999999</span>
+                <br><br>
+                
+            </div>
+            </div>
+            
+            <div class="col-md-12" style="border:2px solid #3C8DBA; margin-top:10px;">
+            
+            
+            <div class="col-md-12" style="padding:0; margin:0;">
+                Go To:<br>
+                <div class="col-md-3">
+                    <button type="submit" id="" class="btn  btn-primary btn-lg" onclick="location.href='clubs'"><i class="fa fa-edit"></i> Clubs</button>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" id="" class="btn  btn-primary btn-lg" onclick="location.href='addc'"><i class="fa fa-edit"></i> Coordinators</button>
+                </div>
+                <div class="col-md-5">
+                    <button type="submit" id="" class="btn  btn-primary btn-lg" onclick="location.href='attendance'"><i class="fa fa-edit"></i> Attendance</button>
+                </div>
+                
+                <br>
+                Do Operations:
+                <br>
+                <div class="col-md-3">
+                    <button type="submit" id="" class="btn  btn-primary btn-lg"><i class="fa fa-edit"></i> -------</button>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" id="" class="btn  btn-primary btn-lg"><i class="fa fa-edit"></i> All Student Access</button>
+                </div>
+                <div class="col-md-5">
+                    <button type="submit" id="" class="btn  btn-primary btn-lg"><i class="fa fa-edit"></i> Erase Complete Database</button>
+                </div>
+                
+                
+                
+                
+            </div>
+            
+            <div class="col-md-12" style="padding:0; margin:0;">
+                <br>
+                <div class="box box-solid box-primary">
+                    
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Set Date for the Next Non-Academic Day</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <form action="home/setd" method="post">
+                    <div class="box-body" style="">
+                        
+                        <div style="float:left; padding-right:10%;">
+                                Choose a Date for Non-Academic Event:<br>
+                                
+                                
+                                <input type="date" id="setd" name="setd">
+                                
+                        </div>
+                        <div style="float:left; padding-top:2%;">
+                                <button type="submit" id="" class="btn  btn-primary btn-lg" style="float:left; margin-left:5px;"><i class="fa fa-edit"></i> SUBMIT</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-12" style="padding:0; margin:0;">
+                <br>
+                <div class="box box-solid box-primary">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Open/Freez Attendance</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body" style="padding-top:0;">
+                        <br>
+                        <div class="col-md-6" >
+                            <div class="col-md-12">
+                            <button type="submit" id="openb" class="btn  btn-primary btn-lg" style="float:left; margin-right:5px;"><i class="fa fa-edit"></i> OPEN</button>
+                            </div>
+                            <div class="col-md-12" id="hidOpen" style="visibility:hidden;">
+                            <div class="col-md-9">
+                                Select the Date:
+                                <select id="odate" name="odate" class="form-control">
+                                  <option>Select Date:</option>
+                                    {% for ditems in ditem %} 
+                                    <option id="{{ ditems.sno }}">{{ ditems.date }}</option>
+                                    {% endfor %}
+                                </select>
+                            
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" id="" class="btn  btn-primary btn-xs" style="float:left; margin-left:5px;" onclick="submito()"><i class="fa fa-edit"></i> SUBMIT</button>
+                            </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                            <button type="submit" id="openf" class="btn  btn-primary btn-lg" style="float:left; margin-right:5px;"><i class="fa fa-edit"></i> FREEZ</button>
+                            </div>
+                            <div class="col-md-12" id="hidFreez" style="visibility:hidden;">
+                            <div class="col-md-8">
+                                Select the Date:
+                                <select id="fdate" name="fdate" class="form-control">
+                                  <option>Select Date:</option>
+                                    {% for ditems in ditem %} 
+                                    <option id="{{ ditems.sno }}">{{ ditems.date }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" id="" class="btn  btn-primary btn-xs" style="float:left; margin-left:5px;" onclick="submitf()"><i class="fa fa-edit"></i> SUBMIT</button>
+                            </div>
+                            
+                            </div>
+                        </div>
+                        <div id="abc" class="col-md-12">
+                                
+                        </div>
+                        <script type="application/javascript">
+                            document.getElementById("openb").onclick = function(){
+                                document.getElementById("hidOpen").style.visibility="visible";
+                            }
+                            document.getElementById("openf").onclick = function(){
+                                document.getElementById("hidFreez").style.visibility="visible";
+                            }
+                           
+                            function submitf(){
+                                var e = document.getElementById("fdate");
+                                var value = e.options[e.selectedIndex].id;
+                                {% for ditems in ditem %} 
+                                    if( {{ ditems.sno }} == value){
+                                        if({{ ditems.valid }}==0){
+                                            document.getElementById("abc").style.color="red";
+                                            document.getElementById("abc").style.textAlign="center";
+                                            document.getElementById("abc").innerHTML="This Date is Already On Freez";
+                                            document.getElementById("fdate").options.selectedIndex=0;
+                                        }else{
+                                            document.getElementById("abc").innerHTML="";
+                                            window.location.href+="/freez/{{ditems.date}}/";
+                                        }
+                                    }
+                                 {% endfor %}
+                                
+                            }
+                            function submito(){
+                                var e = document.getElementById("odate");
+                                var value = e.options[e.selectedIndex].id;
+                                {% for ditems in ditem %} 
+                                    if( {{ ditems.sno }} == value){
+                                        if({{ ditems.valid }}==1){
+                                            document.getElementById("abc").style.color="red";
+                                            document.getElementById("abc").style.textAlign="center";
+                                            document.getElementById("abc").innerHTML="This Date is Already OPEN";
+                                            document.getElementById("odate").options.selectedIndex=0;
+                                        }else{
+                                            document.getElementById("abc").innerHTML="";
+                                            window.location.href+="/open/{{ditems.date}}/";
+                                        }
+                                    }
+                                 {% endfor %}
+                                
+                            }
+
+                        </script>
+                </div>
+            </div>
+            </div>    
+            
+            
+            </div></div>
+            
+        <div class="col-md-4">   
+        <div class="box box-solid box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">List of Clubs</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                
+                <table class="table table-striped">
+                    <tr>
+                        <th style="width: 15px">#</th>
+                        <th>Club ID</th>
+                        <th>Club Name</th>
+                        <th>Coordinator's Name</th>
+                       
+                    </tr>
+                    {% for club in items %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ club.clubid }}</td>
+                            <td>{{ club.clubname }}</td>
+                            <td>{{ club.coordinator }}</td>                            
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+              <!-- /.box-body -->
+          </div>
+        </div>
+            
         
+            
+        </div>
         
         
         

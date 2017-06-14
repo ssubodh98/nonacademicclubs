@@ -174,7 +174,7 @@ desired effect
                 <div class="box-header with-border">
                   <h3 class="box-title">Edit the Attendance</h3>
                 </div>
-                <form method="POST">
+                
                 <div class="box-body">
                     Select the Date:
                     <select id="date" name="date" class="form-control" onchange="enter()">
@@ -190,7 +190,7 @@ desired effect
                         var e = document.getElementById("date");
                         var value = e.options[e.selectedIndex].id;
                         //document.getElementById("abc").innerHTML=;
-                    
+                        
                         {% for ditems in ditem %} 
                             if( {{ ditems.sno }} == value){
                                 if({{ ditems.valid }}==0){
@@ -200,19 +200,32 @@ desired effect
                                     document.getElementById("date").options.selectedIndex=0;
                                 }else{
                                     document.getElementById("abc").innerHTML="";
+                                    window.location.href+="datess/{{ditems.date}}/";
                                 }
                             }
+                            {% for ditems3 in ditem3 %} 
+                                document.getElementById("abc").innerHTML+={{ ditems3.date }};
+                            {% endfor %}
                         {% endfor %}
+                        
+                        
+                       //document.getElementById("tablez").style.visibility="visible";
                     }
                     pcount=0;
                     acount=0;
+                    /*function
+                    document.getElementById("tablez").onchange=showtable();*/
+                    
                 </script>
-                
+                <div class="box-body">
+                    <div id="abc"></div>
+                    
+                </div>
                 
                 
                 <div class="box-body">
                     
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered" id="tablez">
                         <tr>
                             <th style="width: 15px">#</th>
                             <th>Register Number</th>
@@ -223,42 +236,103 @@ desired effect
                         {% for studs in stud %}
                             <tr>
                                 <td>{{ loop.index }}</td>
-                                
                                 <td>{{ studs.regno }}</td>
                                 <input type="hidden" value="{{ studs.regno }}">
                                 <td>{{ studs.firstname }} {{ studs.middlename }} {{ studs.lastname }}</td>
                                 <td>
-                                    <input type="checkbox" name="attend[]" value="{{ studs.regno }}" id="{{ studs.regno }}" onchange="selct(this.id)" checked>
+                                    <div id="{{ loop.index }}{{ studs.regno }}">
+                                    
+                                    </div>
+                                    <input type="hidden" id="in{{ loop.index }}{{ studs.regno }}" value="ABSENT">
+                                    <script type="application/javascript">
+                                        //document.getElementById("{{ loop.index }}{{ studs.regno }}").innerHTML="PRESENT";
+                                        var flag=0;
+                                        var bb="{{studs.regno}}";
+                                        //var aa="aa"
+                                        {% for ditems3 in ditem3 %}
+                                            var aa="{{ ditems3.regno }}";
+                                            
+                                            if(aa==bb){
+                                                flag=1;
+                                            }
+                                        {% endfor %}
+                                        if(flag==1){
+                                            document.getElementById("{{ loop.index }}{{ studs.regno }}").innerHTML="PRESENT";
+                                            document.getElementById("in{{ loop.index }}{{ studs.regno }}").value="PRESENT";
+                                        }else{
+                                            document.getElementById("{{ loop.index }}{{ studs.regno }}").innerHTML="ABSENT";
+                                        }
+                                        
+                                        
+                                    </script>
+                                    
                                 </td>
-                                <script>
-                                    var pcount=pcount+1;
-                                </script>
-                                <td><button type="button" class="btn btn-block btn-warning btn-sm">Change</button></td>
+                                <td>
+                                    <button type="button" id="b{{ studs.regno }}" class="btn btn-block btn-warning btn-sm" 
+                                            onclick="changez({{ studs.regno }})">Change</button>
+                                    <!--<button type="button" id="changest" class="btn btn-block btn-warning btn-sm" 
+                                            onclick="location.href='change/{{ studs.regno }}';" >Change</button>-->
+                                </td>
                             </tr>
-                        {% endfor %}
-                        <script type="application/javascript">
-                            document.getElementById("pid").innerHTML=pcount;
-                            document.getElementById("aid").innerHTML=acount;
-                            function selct(idd){
-                                if(document.getElementById(idd).checked){
-                                    pcount=pcount+1;
-                                    acount=acount-1;
-                                    document.getElementById("pid").innerHTML=pcount;
-                                    document.getElementById("aid").innerHTML=acount;
-                                }else{
-                                    pcount=pcount-1;
-                                    acount=acount+1;
-                                    document.getElementById("pid").innerHTML=pcount;
-                                    document.getElementById("aid").innerHTML=acount;
+                            <!--<script type="text/javascript">
+                                //document.getElementById("choosedclub").selected
+                                function changez(){     
+                                    var e = document.getElementById("{{ loop.index }}{{ studs.regno }}").value;
+                                    if(e=="PRESENT"){}
+                                    az=document.getElementById("in3103").value;
+                                    document.getElementById("1100").innerHTML=az;
+                                    //window.location.href="change/{{ studs.regno }}";
                                 }
-                            }
+                            </script>-->
+                        {% endfor %}
+                        <script type="text/javascript">
+                            //document.getElementById("choosedclub").selected
+                            /*function changez(){     
+                                var e = document.getElementById("{{ loop.index }}{{ studs.regno }}").value;
+                                if(e=="PRESENT"){}
+                                document.getElementById("1100").innerHTML="aasdsad";
+                                //window.location.href="change/{{ studs.regno }}";
+                            }*/
+                            //document.getElementById("1100").innerHTML="aasdsad";
 
+                            /*document.getElementById("b100").onclick=fuction(){
+                                //window.location.href="sadasd";
+                               // var aa=document.getElementById("in{{ loop.index }}{{ studs.regno }}").value;
+                                document.getElementById("1100").innerHTML="aasdsad";
+                            }*/
+                            function changez(v){     
+                                    {% for studs in stud %}
+                                        if(v=={{ studs.regno }}){
+                                            if(document.getElementById("in{{ loop.index }}{{ studs.regno }}").value=="PRESENT"){
+                                                v="sa";
+                                                window.location.href+="change/{{ studs.regno }}";
+                                            }
+                                            if(document.getElementById("in{{ loop.index }}{{ studs.regno }}").value=="ABSENT"){
+                                                v="sa";
+                                                window.location.href+="absent/{{ studs.regno }}";
+                                            }
+                                        }
+                                            
+                                     {% endfor %}
+                                    az=document.getElementById("in3103").value;
+                                    document.getElementById("1100").innerHTML=v;
+                                    //window.location.href="change/{{ studs.regno }}";
+                                }
+                            /*{% for studs in stud %}
+                                document.getElementById("b{{ studs.regno }}").onclick=fuction(){
+                                    //window.location.href="sadasd";
+                                   // var aa=document.getElementById("in{{ loop.index }}{{ studs.regno }}").value;
+                                    document.getElementById("1100").innerHTML="aasdsad";
+                                }
+                            {% endfor %} */  
                         </script>
+                        
                     </table><br>
-                    <button type="submit" id="submitb" class="btn btn-primary">Submit</button>
+                    
+                    
                     
                 </div>
-                </form>
+                
                 
         </div>
             
