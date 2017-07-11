@@ -69,12 +69,17 @@ $app->post('/login', function($request, $response, $args) {
         echo $e->getMessage();
         die();
     }
+    /*if($query2->rowCount()>0){
+        return $this->view->render($response, 'login.twig');
+    }else{
+        return $this->view->render($response, 'login.twig');
+    }*/
     
-    $docs2 = $query2->FetchAll();
+    /*$docs2 = $query2->FetchAll();
     $items2 = array();
     foreach ($docs2 as $doc2){
     $items2[] = $doc2;        
-    }
+    }*/
 
     
     return $this->view->render($response, 'login.twig');
